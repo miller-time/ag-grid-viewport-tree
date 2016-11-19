@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
 export interface RowData {
+  group?: number;
+  children?: RowData[];
   mean: number;
   median: number;
   mode: number;
