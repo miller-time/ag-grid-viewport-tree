@@ -6,6 +6,7 @@ import { HttpModule } from '@angular/http';
 import { AgGridModule } from 'ag-grid-ng2/main';
 
 import { AppComponent } from './app.component';
+import { GridComponent } from './grid/grid.component';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { AppComponent } from './app.component';
     AgGridModule.withNg2ComponentSupport()
   ],
   declarations: [
-    AppComponent
+    AppComponent,
+    GridComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
