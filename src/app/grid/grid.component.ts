@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { GridApi, GridOptions, NodeChildDetails, IViewportDatasourceParams } from 'ag-grid/main';
+import { GridApi, GridOptions, IViewportDatasourceParams } from 'ag-grid/main';
 import 'ag-grid-enterprise';
 
 import { Subject } from 'rxjs';
@@ -46,6 +46,9 @@ export class GridComponent {
         });
         this.subscribeForViewportRange();
         this.gridApi.setViewportDatasource(datasource);
+      },
+      onModelUpdated: (event: any) => {
+        console.log('model updated', event);
       }
     };
   }

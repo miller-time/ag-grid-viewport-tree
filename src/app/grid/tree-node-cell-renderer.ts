@@ -36,6 +36,17 @@ export class TreeNodeCellRenderer implements ICellRenderer {
 
   private updateValue() {
     if (this.params.data && this.params.data.group) {
+      if (!this.params.node.expanded) {
+        setTimeout(() => {
+          console.log('expanding group ' + this.params.data.group);
+          this.params.node.expanded = true;
+          console.log('firing "modelUpdated" for group ' + this.params.data.group);
+          this.params.api.dispatchEvent('modelUpdated', {
+            group: this.params.data.group,
+            expanded: this.params.node.expanded
+          });
+        }, 3000);
+      }
       this.valueElement.innerHTML = '<b>Group ' + this.params.data.group + '</b>';
     }
   }
