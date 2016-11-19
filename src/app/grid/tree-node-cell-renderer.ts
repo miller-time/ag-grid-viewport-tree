@@ -58,6 +58,11 @@ export class TreeNodeCellRenderer implements ICellRenderer {
   private onExpandedOrCollapsed() {
     this.params.node.expanded = !this.params.node.expanded;
     this.updateValue();
+
+    this.params.api.dispatchEvent('rowGroupOpened', {
+      group: this.params.data.group,
+      expanded: this.params.node.expanded
+    });
   }
 
   private updateValue() {
