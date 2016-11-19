@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+.expand-collapse-btn {
+  border: 0;
+  background: transparent;
+}
+
+.expand-collapse-btn:focus {
+  outline: none;
+}
