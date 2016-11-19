@@ -40,7 +40,12 @@ export class GridService {
   ) {
     let treeRowMap: { [key: number]: RowData } = {};
     let treeCurrentRow = 0;
+    // @TODO: building the tree map should be recursive, and probably
+    //  also want to set "level" or something on the row while walking the tree
     rowData.forEach((row: RowData) => {
+      // @TODO: remove `children` from group rows before sending to grid
+      // (the grid doesn't actually need the children to exist on a group node
+      //  because each child row is just a row)
       treeRowMap[treeCurrentRow] = row;
       treeCurrentRow += 1;
       if (row.children && !collapsedGroups[row.group.toString()]) {
