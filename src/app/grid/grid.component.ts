@@ -47,8 +47,8 @@ export class GridComponent {
         this.subscribeForViewportRange();
         this.gridApi.setViewportDatasource(datasource);
       },
-      onModelUpdated: (event: any) => {
-        console.log('model updated', event);
+      onRowGroupOpened: (event: any) => {
+        console.log('row group toggled', event);
       }
     };
   }

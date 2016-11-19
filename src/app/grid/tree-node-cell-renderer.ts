@@ -40,8 +40,8 @@ export class TreeNodeCellRenderer implements ICellRenderer {
         setTimeout(() => {
           console.log('expanding group ' + this.params.data.group);
           this.params.node.expanded = true;
-          console.log('firing "modelUpdated" for group ' + this.params.data.group);
-          this.params.api.dispatchEvent('modelUpdated', {
+          console.log('firing "rowGroupOpened" for group ' + this.params.data.group);
+          this.params.api.dispatchEvent('rowGroupOpened', {
             group: this.params.data.group,
             expanded: this.params.node.expanded
           });
