@@ -33,7 +33,6 @@ export class GridComponent {
         { field: 'mode',   headerName: 'Mode',   width: 200 },
         { field: 'range',  headerName: 'Range',  width: 200 },
       ],
-      getNodeChildDetails: (rowItem) => this.getNodeChildDetails(rowItem),
       onGridReady: (event) => {
         this.gridApi = event.api;
         let datasource = new ViewportDatasource({
@@ -49,19 +48,6 @@ export class GridComponent {
         this.gridApi.setViewportDatasource(datasource);
       }
     };
-  }
-
-  private getNodeChildDetails(rowItem): NodeChildDetails {
-    console.log('getNodeChildDetails');
-    if (rowItem.group) {
-      return {
-        group: true,
-        expanded: true,
-        children: rowItem.children,
-        field: 'group',
-        key: 'Group ' + rowItem.group
-      };
-    }
   }
 
   private subscribeForViewportRange() {
