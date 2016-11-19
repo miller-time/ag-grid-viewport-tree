@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 
 import { GridService, GridData } from './grid.service';
 import { ViewportDatasource } from './viewport-datasource';
+import { TreeNodeCellRenderer } from './tree-node-cell-renderer';
 
 @Component({
   selector: 'app-grid',
@@ -26,7 +27,7 @@ export class GridComponent {
       enableColResize: true,
       rowModelType: 'viewport',
       columnDefs: [
-        { headerName: 'Group', cellRenderer: this.groupCellRenderer },
+        { headerName: 'Group', cellRenderer: TreeNodeCellRenderer },
         { field: 'mean',   headerName: 'Mean',   width: 200 },
         { field: 'median', headerName: 'Median', width: 200 },
         { field: 'mode',   headerName: 'Mode',   width: 200 },
@@ -48,14 +49,6 @@ export class GridComponent {
         this.gridApi.setViewportDatasource(datasource);
       }
     };
-  }
-
-  private groupCellRenderer(params) {
-    if (params.data && params.data.group) {
-      return '<b>Group ' + params.data.group + '</b>';
-    } else {
-      return '';
-    }
   }
 
   private getNodeChildDetails(rowItem): NodeChildDetails {
