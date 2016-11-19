@@ -40,6 +40,7 @@ export class GridService {
       treeCurrentRow += 1;
       if (row.children) {
         row.children.forEach((childRow: RowData) => {
+          treeRowMap[treeCurrentRow] = childRow;
           treeCurrentRow += 1;
         });
       }
