@@ -30,6 +30,10 @@ export class TreeNodeCellRenderer implements ICellRenderer {
     this.updateValue();
   }
 
+  destroy() {
+    this.toggleButton.removeEventListener('click', this.onExpandedOrCollapsed.bind(this));
+  }
+
   private createElement() {
     this.element = document.createElement('div');
     this.element.innerHTML = `
@@ -41,9 +45,18 @@ export class TreeNodeCellRenderer implements ICellRenderer {
       <span class="group-value"></span>
     `;
     this.toggleButton = <HTMLElement>this.element.querySelectorAll('button')[0];
+    this.toggleButton.addEventListener('click', this.onExpandedOrCollapsed.bind(this));
+
     this.expandedElement = <HTMLElement>this.element.querySelectorAll('.expanded')[0];
     this.collapsedElement = <HTMLElement>this.element.querySelectorAll('.collapsed')[0];
+
     this.valueElement = <HTMLElement>this.element.querySelectorAll('.group-value')[0];
+
+    this.updateValue();
+  }
+
+  private onExpandedOrCollapsed() {
+    this.params.node.expanded = !this.params.node.expanded;
     this.updateValue();
   }
 
