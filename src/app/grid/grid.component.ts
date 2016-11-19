@@ -7,7 +7,9 @@ import { Subject } from 'rxjs';
 
 import { GridService, GridData } from './grid.service';
 import { ViewportDatasource } from './viewport-datasource';
-import { TreeNodeCellRenderer } from './tree-node-cell-renderer';
+import { TreeNodeCellRenderer, ExpandGroupEvent } from './tree-node-cell-renderer';
+
+type CollapsedGroups = { [key: string]: boolean };
 
 @Component({
   selector: 'app-grid',
@@ -18,7 +20,10 @@ export class GridComponent {
   private gridApi: GridApi;
   private gridOptions: GridOptions;
   private viewportParams: IViewportDatasourceParams;
-  private viewportRange = new Subject<{firstRow: number, lastRow: number}>();
+  private viewportRange = {firstRow: 0, lastRow: 0};
+  private viewportChange = new Subject<{firstRow: number, lastRow: number}>();
+  private collapsedGroups: CollapsedGroups = {};
+  private groupToggle = new Subject<ExpandGroupEvent>();
 
   constructor(
     private gridService: GridService
@@ -38,34 +43,57 @@ export class GridComponent {
         let datasource = new ViewportDatasource({
           viewportReady: (params: IViewportDatasourceParams) => {
             this.viewportParams = params;
-            this.viewportRange.next({firstRow: 0, lastRow: 0});
+            this.viewportChange.next({firstRow: 0, lastRow: 0});
           },
           viewportRangeChanged: (firstRow: number, lastRow: number) => {
-            this.viewportRange.next({firstRow, lastRow});
+            this.viewportChange.next({firstRow, lastRow});
           }
         });
-        this.subscribeForViewportRange();
+        this.subscribeForViewportChanges();
+        this.subscribeForGroupToggles();
         this.gridApi.setViewportDatasource(datasource);
       },
-      onRowGroupOpened: (event: any) => {
+      onRowGroupOpened: (event: ExpandGroupEvent) => {
         console.log('row group toggled', event);
+        this.groupToggle.next(event);
       }
     };
   }
 
-  private subscribeForViewportRange() {
-    this.viewportRange
+  private subscribeForViewportChanges() {
+    this.viewportChange
       .debounceTime(200)
-      .distinctUntilChanged((a, b) => a.firstRow === b.firstRow && a.lastRow === b.lastRow)
+      .distinctUntilChanged((a, b) => {
+          return a.firstRow === b.firstRow && a.lastRow === b.lastRow;
+      })
       .switchMap((range) => {
         console.log('viewport range:', range.firstRow, range.lastRow);
-        return this.gridService.getData(range.firstRow, range.lastRow);
+        this.viewportRange.firstRow = range.firstRow;
+        this.viewportRange.lastRow = range.lastRow;
+        return this.updateGrid();
       })
-      .subscribe((gridData: GridData) => {
+      .subscribe();
+  }
+
+  private subscribeForGroupToggles() {
+    this.groupToggle
+      .subscribe((toggle: ExpandGroupEvent) => {
+        this.collapsedGroups[toggle.group] = !toggle.expanded;
+        this.updateGrid()
+          .subscribe();
+      });
+  }
+
+  private updateGrid() {
+    return this.gridService.getData(
+      this.viewportRange.firstRow,
+      this.viewportRange.lastRow,
+      this.collapsedGroups
+    ).map((gridData: GridData) => {
         this.viewportParams.setRowCount(gridData.rowCount);
         console.log('fetched ' + gridData.rowCount + ' rows of data');
         this.viewportParams.setRowData(gridData.rowDataMap);
         console.log('setting row data', gridData.rowDataMap);
-      });
+    });
   }
 }

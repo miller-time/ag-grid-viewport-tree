@@ -8,6 +8,8 @@ interface CellRendererParams {
   api: GridApi;
 }
 
+export type ExpandGroupEvent = { group: string, expanded: boolean };
+
 export class TreeNodeCellRenderer implements ICellRenderer {
   private params: CellRendererParams;
   private element: HTMLElement;
@@ -59,8 +61,8 @@ export class TreeNodeCellRenderer implements ICellRenderer {
     this.params.node.expanded = !this.params.node.expanded;
     this.updateValue();
 
-    this.params.api.dispatchEvent('rowGroupOpened', {
-      group: this.params.data.group,
+    this.params.api.dispatchEvent('rowGroupOpened', <ExpandGroupEvent>{
+      group: this.params.data.group.toString(),
       expanded: this.params.node.expanded
     });
   }

@@ -24,21 +24,26 @@ export interface GridData {
 export class GridService {
   constructor(private http: Http) { }
 
-  getData(firstRow: number, lastRow: number): Observable<GridData> {
+  getData(firstRow: number, lastRow: number, collapsedGroups: { [key: string]: boolean }): Observable<GridData> {
     return this.http.get('/app/dataset')
       .map((res: Response) => {
         let rowData: RowData[] = res.json().data;
-        return this.convertToRowDataMap(rowData, firstRow, lastRow);
+        return this.convertToRowDataMap(rowData, firstRow, lastRow, collapsedGroups);
       });
   }
 
-  private convertToRowDataMap(rowData: RowData[], firstRow: number, lastRow: number) {
+  private convertToRowDataMap(
+    rowData: RowData[],
+    firstRow: number,
+    lastRow: number,
+    collapsedGroups: { [key: string]: boolean }
+  ) {
     let treeRowMap: { [key: number]: RowData } = {};
     let treeCurrentRow = 0;
     rowData.forEach((row: RowData) => {
       treeRowMap[treeCurrentRow] = row;
       treeCurrentRow += 1;
-      if (row.children) {
+      if (row.children && !collapsedGroups[row.group.toString()]) {
         row.children.forEach((childRow: RowData) => {
           treeRowMap[treeCurrentRow] = childRow;
           treeCurrentRow += 1;
