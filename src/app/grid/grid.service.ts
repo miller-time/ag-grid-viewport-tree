@@ -13,12 +13,50 @@ export interface RowData {
   range: number;
 }
 
+export interface GridData {
+  rowCount: number;
+  firstRow: number;
+  lastRow: number;
+  rowDataMap: { [key: number]: RowData };
+}
+
 @Injectable()
 export class GridService {
   constructor(private http: Http) { }
 
-  getData(): Observable<RowData[]> {
+  getData(firstRow: number, lastRow: number): Observable<GridData> {
     return this.http.get('/app/dataset')
-      .map((res: Response) => res.json().data);
+      .map((res: Response) => {
+        let rowData: RowData[] = res.json().data;
+        return this.convertToRowDataMap(rowData, firstRow, lastRow);
+      });
+  }
+
+  private convertToRowDataMap(rowData: RowData[], firstRow: number, lastRow: number) {
+    let treeRowMap: { [key: number]: RowData } = {};
+    let treeCurrentRow = 0;
+    rowData.forEach((row: RowData) => {
+      treeRowMap[treeCurrentRow] = row;
+      treeCurrentRow += 1;
+      if (row.children) {
+        row.children.forEach((childRow: RowData) => {
+          treeCurrentRow += 1;
+        });
+      }
+    });
+
+    let rowDataMap: { [key: number]: RowData } = {};
+    for (let i = firstRow; i <= lastRow; ++i) {
+      if (treeRowMap[i]) {
+        rowDataMap[i] = treeRowMap[i];
+      }
+    }
+
+    return {
+      rowCount: treeCurrentRow,
+      firstRow: firstRow,
+      lastRow: lastRow,
+      rowDataMap: rowDataMap
+    };
   }
 }
