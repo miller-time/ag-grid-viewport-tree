@@ -11,6 +11,7 @@ import { AgGridModule } from 'ag-grid-ng2/main';
 
 import { AppComponent } from './app.component';
 import { GridComponent } from './grid/grid.component';
+import { GridService } from './grid/grid.service';
 
 @NgModule({
   imports: [
@@ -24,7 +25,9 @@ import { GridComponent } from './grid/grid.component';
     AppComponent,
     GridComponent
   ],
-  providers: [],
+  providers: [
+    GridService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
